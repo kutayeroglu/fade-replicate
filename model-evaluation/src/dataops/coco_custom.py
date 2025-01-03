@@ -68,7 +68,7 @@ class COCODatasetWithIDs(datasets.CocoDetection):
         if self.transform is not None:
             img, target = self.transform(img, target)
 
-        return img, target
+        return img, target, img_id
     
 
 def format_predictions_for_coco(predictions, image_ids):
