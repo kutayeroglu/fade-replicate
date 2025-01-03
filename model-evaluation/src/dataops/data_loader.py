@@ -7,20 +7,7 @@ from dataops.coco_custom import COCODatasetWithIDs
 from dataops.transformations import get_transform
 
 
-def get_data_loader():
-    # TODO: Get following params: dataset_split, drive_images_dir, drive_annotations_full_path
-    # Data split type (train2017, val2017, test2017)
-    dataset_split = "val2017"
-
-    # Paths in Google Drive
-    ## Images
-    drive_coco_base_dir = '/content/drive/MyDrive/coco'
-    drive_images_dir = os.path.join(drive_coco_base_dir, 'images', dataset_split)
-
-    ## Annotations
-    ann_filename = f'instances_{dataset_split}.json'
-    drive_annotations_full_path = os.path.join(drive_coco_base_dir, 'annotations', ann_filename)
-
+def get_data_loader(drive_images_dir, drive_annotations_full_path):
     # Sanity check
     ensure_datadir_exists(drive_images_dir, drive_annotations_full_path)
 
