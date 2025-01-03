@@ -1,4 +1,5 @@
 import torch
+from torchvision import models
 from torchvision.models import resnet50
 from torchvision.models._utils import IntermediateLayerGetter
 from torchvision.models.detection import FasterRCNN
@@ -17,10 +18,7 @@ FPN_FADE = module.FADEFeaturePyramidNetwork
 
 def create_baseline_model(num_classes=91):
     """Create a standard Faster R-CNN model with a ResNet-50 backbone."""
-    return FasterRCNN(
-        backbone=resnet50(pretrained=True),
-        num_classes=num_classes
-    )
+    return models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
 
 
 def create_custom_FADE_model(device, model_path, num_classes=91):
