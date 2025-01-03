@@ -3,7 +3,16 @@ from tqdm import tqdm
 import torch
 from pycocotools.coco import COCO
 
-from src.dataops.coco_custom import format_predictions_for_coco
+import importlib.util
+# Path to the `coco_custom.py` file
+coco_custom_path = "/content/drive/MyDrive/Colab Notebooks/cmpe593/term-project/src/dataops/coco_custom.py"
+# Load the module dynamically
+spec = importlib.util.spec_from_file_location("coco_custom", coco_custom_path)
+coco_custom_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(coco_custom_module)
+
+# Import the specific function
+format_predictions_for_coco = coco_custom_module.format_predictions_for_coco
 
 
 def predict(model, data_loader, annotations_full_path, device):
