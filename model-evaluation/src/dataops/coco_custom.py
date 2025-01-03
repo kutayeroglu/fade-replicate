@@ -1,12 +1,19 @@
 import torch
-from torchvision import datasets
+from torchvision.datasets import CocoDetection
 
 
-class COCODatasetWithIDs(datasets.CocoDetection):
-    def __init__(self, root, annFile, available_image_IDs, transform=None):
+class COCODatasetWithIDs(CocoDetection):
+    def __init__(self, root, annFile, transform=None, available_image_IDs=None, train=True):
         super().__init__(root, annFile, transform=None)
-        self.ids = [img_id for img_id in self.ids if img_id in available_image_IDs] # Filter out missing images
+
+        self.train = train
+        self.available_image_IDs = available_image_IDs
         self.transform = transform
+
+        # Filter out missing image IDs
+        if available_image_IDs is not None:
+            self.ids = [img_id for img_id in self.ids if img_id in available_image_IDs]
+            
 
         # Create a mapping from COCO category IDs to a contiguous range
         self.cat_ids = sorted(self.coco.getCatIds())

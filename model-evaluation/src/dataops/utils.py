@@ -56,4 +56,5 @@ def generate_image_IDs(image_dir):
   return available_images
 
 def collate_fn(batch):
-    return tuple(zip(*batch))
+    # Ensure data loader skips None values
+    return tuple(zip(*[b for b in batch if b is not None]))

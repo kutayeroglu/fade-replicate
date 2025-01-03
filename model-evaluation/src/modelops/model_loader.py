@@ -35,11 +35,6 @@ def create_custom_FADE_model(device, model_path, num_classes=91):
     # Create the custom FPN
     in_channels_list = [512, 1024, 2048]
     out_channels = 256
-    fpn = FPN_FADE(
-        in_channels_list=in_channels_list,
-        out_channels=out_channels,
-        extra_blocks=None
-    )
 
     # Combine the backbone with the custom FPN
     backbone_with_fpn = BackboneWithFPN(
@@ -49,7 +44,14 @@ def create_custom_FADE_model(device, model_path, num_classes=91):
         out_channels=out_channels,
         extra_blocks=None
     )
-    backbone_with_fpn.fpn = fpn
+
+    fpn_fade = FPN_FADE(
+        in_channels_list=in_channels_list,
+        out_channels=out_channels,
+        extra_blocks=None
+    )
+
+    backbone_with_fpn.fpn = fpn_fade
 
     # Define anchor generator
     anchor_sizes = ((32,), (64,), (128,))
