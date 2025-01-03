@@ -71,7 +71,7 @@ class COCODatasetWithIDs(datasets.CocoDetection):
         return img, target
     
 
-def prepare_for_coco_detection(predictions, image_ids):
+def format_predictions_for_coco(predictions, image_ids):
     """
     Converts raw model predictions into the COCO evaluation format.
 

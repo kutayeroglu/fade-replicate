@@ -3,7 +3,7 @@ from tqdm import tqdm
 import torch
 from pycocotools.coco import COCO
 
-from src.dataops.coco_custom import prepare_for_coco_detection
+from src.dataops.coco_custom import format_predictions_for_coco
 
 
 def predict(model, data_loader, annotations_full_path, device):
@@ -24,6 +24,6 @@ def predict(model, data_loader, annotations_full_path, device):
             outputs = [{k: v.cpu() for k, v in t.items()} for t in outputs]
 
             # Prepare results for COCO evaluation
-            results.extend(prepare_for_coco_detection(outputs, image_ids))
+            results.extend(format_predictions_for_coco(outputs, image_ids))
 
     return results, coco_gt
