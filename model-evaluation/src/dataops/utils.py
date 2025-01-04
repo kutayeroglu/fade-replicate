@@ -58,3 +58,14 @@ def generate_image_IDs(image_dir):
 def collate_fn(batch):
     # Ensure data loader skips None values
     return tuple(zip(*[b for b in batch if b is not None]))
+
+
+def get_data_subset(dataset, subset_size=5000):
+    print(f'\nCreating subset of dataset with size {subset_size}...')
+    import random
+    from torch.utils.data import Subset
+
+    dataset_size = len(dataset)
+    subset_indices = random.sample(range(dataset_size), min(subset_size, dataset_size))
+
+    return Subset(dataset, subset_indices)

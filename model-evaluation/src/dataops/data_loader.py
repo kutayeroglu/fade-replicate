@@ -2,12 +2,13 @@ import os
 
 from torch.utils.data import DataLoader
 
-from dataops.utils import generate_image_IDs, ensure_datadir_exists, collate_fn
+from dataops.utils import generate_image_IDs, ensure_datadir_exists, collate_fn, get_data_subset
 from dataops.coco_custom import COCODatasetWithIDs
 from dataops.transformations import get_transform
 
 
-def get_data_loader(drive_images_dir, drive_annotations_full_path, train=True):
+
+def get_data_loader(drive_images_dir, drive_annotations_full_path, train=True, subset=False):
     # Sanity check
     ensure_datadir_exists(drive_images_dir, drive_annotations_full_path)
 
@@ -22,6 +23,12 @@ def get_data_loader(drive_images_dir, drive_annotations_full_path, train=True):
 
     print(f'\nDataset size is {dataset.__len__()}')
 
+    if subset: # TODO: ensure class distribution stays similar
+        # Get subset of dataset, workaround for limited computational resources
+        dataset = get_data_subset(dataset, subset_size=5000) # TODO: dynamic subset size
+
+
+    print("Creating dataloader object...")
     # Create dataloader object
     dataloader = DataLoader(
         dataset,
