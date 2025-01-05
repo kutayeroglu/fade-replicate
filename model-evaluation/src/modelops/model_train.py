@@ -1,11 +1,5 @@
-import time
-import datetime
-import os
 import shutil
-import torch
-from tqdm import tqdm
-import matplotlib.pyplot as plt
-
+import datetime
 
 def train_model(
     model,
