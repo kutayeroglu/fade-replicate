@@ -60,7 +60,7 @@ def collate_fn(batch):
     return tuple(zip(*[b for b in batch if b is not None]))
 
 
-def get_data_subset(dataset, subset_size=5000):
+def get_data_subset(dataset, subset_size):
     print(f'\nCreating subset of dataset with size {subset_size}...')
     import random
     from torch.utils.data import Subset

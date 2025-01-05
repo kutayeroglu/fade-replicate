@@ -8,7 +8,7 @@ from dataops.transformations import get_transform
 
 
 
-def get_data_loader(drive_images_dir, drive_annotations_full_path, train=True, subset=False):
+def get_data_loader(drive_images_dir, drive_annotations_full_path, train=True, subset=False, subset_size=5000):
     # Sanity check
     ensure_datadir_exists(drive_images_dir, drive_annotations_full_path)
 
@@ -25,7 +25,7 @@ def get_data_loader(drive_images_dir, drive_annotations_full_path, train=True, s
 
     if subset: # TODO: ensure class distribution stays similar
         # Get subset of dataset, workaround for limited computational resources
-        dataset = get_data_subset(dataset, subset_size=5000) # TODO: dynamic subset size
+        dataset = get_data_subset(dataset, subset_size)
 
 
     print("Creating dataloader object...")
