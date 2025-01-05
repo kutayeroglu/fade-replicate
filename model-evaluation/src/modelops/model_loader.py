@@ -17,19 +17,41 @@ spec.loader.exec_module(module)
 FPN_FADE = module.FADEFeaturePyramidNetwork
 
 
-def create_baseline_model(num_classes=91, pretrained=True):
-    """Create a baseline Faster R-CNN model with ResNet-50 backbone."""
+def create_baseline_model(num_classes=91, pretrained=True, model_path=None, device='cpu'):
+    """
+    Create a baseline Faster R-CNN model with ResNet-50 backbone.
+
+    Args:
+        num_classes (int): Number of classes including the background.
+        pretrained (bool): Whether to use COCO-pretrained weights.
+        model_path (str, optional): Path to the trained model checkpoint.
+        device (str): Device to load the model on ('cpu' or 'cuda').
+
+    Returns:
+        torch.nn.Module: The baseline Faster R-CNN model.
+    """
     if pretrained:
+        print("Loading baseline model with COCO-pretrained weights...")
         # Fully pretrained Faster R-CNN model (COCO weights)
-        model = fasterrcnn_resnet50_fpn(weights="COCO", num_classes=num_classes)
+        model = fasterrcnn_resnet50_fpn(weights='COCO_V1', num_classes=num_classes)
     else:
+        print("Loading baseline model which was produced from my own training...")
         # No pretrained weights (train from scratch)
         model = fasterrcnn_resnet50_fpn(weights=None, num_classes=num_classes)
+
+        # Load custom-trained weights if model_path is provided
+        if model_path:
+            print(f"Loading baseline model weights from {model_path}")
+            state_dict = torch.load(model_path, map_location=device)
+            model.load_state_dict(state_dict)
+
+    print("Baseline model loaded.")
     return model
 
 
 def create_custom_FADE_model(device, model_path=None, num_classes=91):
     """Create a custom Faster R-CNN model with a FADE FPN."""
+    print("Creating custom FADE model...")
 
     # Define a pretrained ResNet-50 backbone
     backbone = resnet50(pretrained=True)
@@ -67,9 +89,11 @@ def create_custom_FADE_model(device, model_path=None, num_classes=91):
     )
 
     if model_path:
+        print(f"Loading custom FADE model weights from {model_path}")
         state_dict = torch.load(model_path, map_location=device)
         model.load_state_dict(state_dict)
 
+    print("Custom FADE model loaded.")
     return model
 
 
@@ -89,7 +113,7 @@ def load_model(model_type, model_path=None, device='cpu', num_classes=91, pretra
         torch.nn.Module: The model ready for evaluation or further training.
     """
     if model_type == "baseline":
-        model = create_baseline_model(num_classes=num_classes, pretrained=pretrained)
+        model = create_baseline_model(num_classes=num_classes, pretrained=pretrained, model_path=model_path, device=device)
     elif model_type == "custom_FADE":
         model = create_custom_FADE_model(device, model_path, num_classes=num_classes)
     else:
