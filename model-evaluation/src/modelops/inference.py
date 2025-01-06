@@ -15,14 +15,10 @@ spec.loader.exec_module(coco_custom_module)
 format_predictions_for_coco = coco_custom_module.format_predictions_for_coco
 
 
-def predict(model, data_loader, annotations_full_path, device):
-    # Initialize ground truth
-    coco_gt = COCO(annotations_full_path)
-
-    # Run predictions
+def predict(model, data_loader, device):
     with torch.no_grad():
         results = []
-        for images, targets, image_ids in tqdm(data_loader):
+        for images, _, image_ids in tqdm(data_loader):
             # Move images to device
             images = [image.to(device) for image in images]
 
@@ -35,4 +31,4 @@ def predict(model, data_loader, annotations_full_path, device):
             # Prepare results for COCO evaluation
             results.extend(format_predictions_for_coco(outputs, image_ids))
 
-    return results, coco_gt
+    return results

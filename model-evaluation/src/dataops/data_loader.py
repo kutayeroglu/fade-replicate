@@ -1,11 +1,9 @@
-import os
-
 from torch.utils.data import DataLoader
+from pycocotools.coco import COCO
 
 from dataops.utils import generate_image_IDs, ensure_datadir_exists, collate_fn, get_data_subset
 from dataops.coco_custom import COCODatasetWithIDs
 from dataops.transformations import get_transform
-
 
 
 def get_data_loader(drive_images_dir, drive_annotations_full_path, train=True, subset=False, subset_size=5000):
@@ -39,3 +37,9 @@ def get_data_loader(drive_images_dir, drive_annotations_full_path, train=True, s
     )
 
     return dataloader
+
+
+def get_ground_truth(annotations_full_path):
+    # Initialize ground truth
+    coco_gt = COCO(annotations_full_path)
+    return coco_gt
