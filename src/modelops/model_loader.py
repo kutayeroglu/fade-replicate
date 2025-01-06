@@ -55,16 +55,33 @@ def create_custom_FADE_model(device, model_path=None, num_classes=91):
 
     # Define a pretrained ResNet-50 backbone
     backbone = resnet50(pretrained=True)
+
+    # Replace fully connected and average pooling layers with identity operations
+    # to preserve spatial feature maps for object detection tasks.
     backbone.fc = torch.nn.Identity()
     backbone.avgpool = torch.nn.Identity()
 
+    # Multi-scale feature extraction using intermediate layers
     return_layers = {'layer2': '0', 'layer3': '1', 'layer4': '2'}
     backbone = IntermediateLayerGetter(backbone, return_layers=return_layers)
 
-    # Create the custom FPN
+    # Create the custom Feature Pyramid Network (FPN) with FADE
+    # 
+    # `in_channels_list`: The number of channels for the feature maps output 
+    # by `layer2`, `layer3`, and `layer4` of the ResNet backbone. These values 
+    # correspond to the architecture of ResNet-50:
+    #   - `512` for `layer2` (conv3_x)
+    #   - `1024` for `layer3` (conv4_x)
+    #   - `2048` for `layer4` (conv5_x)
+    # These layers provide multi-scale feature maps needed for object detection.
+    # 
+    # `out_channels`: The number of output channels for all levels of the FPN.
+    #   - Standardized to `256` to balance computational efficiency and 
+    #     representational capacity. This choice is widely adopted in FPN-based
+    #     object detectors and originates from the original FPN design by Lin et al. (2017).
     in_channels_list = [512, 1024, 2048]
     out_channels = 256
-    fpn_fade = FPN_FADE(in_channels_list=in_channels_list, out_channels=out_channels)
+    fpn_fade = FPN_FADE(in_channels_list, out_channels)
 
     # Combine the backbone with the custom FPN
     backbone_with_fpn = BackboneWithFPN(

@@ -10,7 +10,7 @@ class FADEFeaturePyramidNetwork(FeaturePyramidNetwork):
     def __init__(self, in_channels_list, out_channels, extra_blocks=None):
         super().__init__(in_channels_list, out_channels, extra_blocks)
 
-        # Remove the existing top-down connections
+        # Remove the existing top-down connections (original skip connections)
         del self.inner_blocks
         del self.layer_blocks
 
@@ -22,10 +22,14 @@ class FADEFeaturePyramidNetwork(FeaturePyramidNetwork):
         for idx, in_channels in enumerate(in_channels_list):
             if in_channels == 0:
                 continue
-            inner_block_module = nn.Conv2d(in_channels, out_channels, kernel_size=1)
-            layer_block_module = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
 
+            # Define 1x1 convolutions (inner blocks) to reduce the number of channels in the lateral feature maps
+            # from their original depth (`in_channels`) to a fixed depth (`out_channels`).
+            # This ensures all feature maps have a consistent depth (e.g., 256 channels) for further processing.
+            inner_block_module = nn.Conv2d(in_channels, out_channels, kernel_size=1)
             self.inner_blocks.append(inner_block_module)
+
+            layer_block_module = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
             self.layer_blocks.append(layer_block_module)
 
             # Add FADE modules except for the highest level
