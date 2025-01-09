@@ -69,3 +69,22 @@ def get_data_subset(dataset, subset_size):
     subset_indices = random.sample(range(dataset_size), min(subset_size, dataset_size))
 
     return Subset(dataset, subset_indices)
+
+def get_num_classes(dataloader):
+    """
+    Retrieve the number of classes from the dataset used by the dataloader.
+
+    Args:
+        dataloader (DataLoader): PyTorch DataLoader object.
+
+    Returns:
+        int: Number of classes.
+    """
+    from torch.utils.data import Subset
+    # Access the original dataset
+    dataset = dataloader.dataset.dataset if isinstance(dataloader.dataset, Subset) else dataloader.dataset
+
+    # Retrieve category IDs
+    category_ids = dataset.cat_ids
+    print(f"Number of categories: {len(category_ids)}")
+    return len(category_ids), category_ids
